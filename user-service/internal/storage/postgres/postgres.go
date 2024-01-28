@@ -28,12 +28,12 @@ func New(dbConfig *config.Storage) (*UserStorage, error) {
 	return &UserStorage{db: db}, nil
 }
 
-func (s *UserStorage) Create() {
+func (s *UserStorage) CreateUser() {
 
 }
 
-func (s *UserStorage) Get() {}
+func (s *UserStorage) GetUser() {}
 
-func (s *UserStorage) Update() {}
+func (s *UserStorage) UpdateUser() {}
 
-func (s *UserStorage) Delete() {}
+func (s *UserStorage) DeleteUser() {}
