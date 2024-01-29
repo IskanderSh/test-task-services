@@ -17,12 +17,12 @@ func New(
 	log *slog.Logger,
 	cfg *config.Config,
 ) *App {
-	storage, err := postgres.New(&cfg.Storage)
+	postgres, err := storage.New(&cfg.Storage)
 	if err != nil {
 		panic(err)
 	}
 
-	userService := services.New(log, storage)
+	userService := services.New(log, postgres)
 
 	grpcApp := grpcapp.New(log, userService, cfg.GRPC.Port)
 

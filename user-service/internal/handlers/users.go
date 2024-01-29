@@ -15,8 +15,7 @@ import (
 )
 
 type UserHandler interface {
-	Create(ctx context.Context, name, surname, email, role string) (string, error)
-	Get(ctx context.Context, uuid string) (models.User, error)
+	Get(ctx context.Context, uuid string) (*models.User, error)
 	Update(ctx context.Context, uuid, name, surname, email, role string) (bool, error)
 	Delete(ctx context.Context, uuid string) (bool, error)
 }
@@ -29,29 +28,6 @@ type serverAPI struct {
 
 func Register(gRPC *grpc.Server, user UserHandler, log *slog.Logger) {
 	userv1.RegisterUserServer(gRPC, &serverAPI{user: user, log: log})
-}
-
-func (s *serverAPI) CreateRequest(ctx context.Context, req *userv1.CreateUserRequest) (*userv1.CreateUserResponse, error) {
-	if err := validateCreateRequest(req); err != nil {
-		return nil, err
-	}
-
-	s.log.Debug(fmt.Sprintf("successfully validate create request with params: %s, %s, %s, %s"),
-		req.GetName(), req.GetSurname(), req.GetEmail(), req.GetRole())
-
-	uuid, err := s.user.Create(ctx, req.GetName(), req.GetSurname(), req.GetEmail(), req.GetRole())
-	if err != nil {
-		if errors.Is(err, services.ErrUserAlreadyExists) {
-			return nil, status.Error(codes.InvalidArgument, "user already exists")
-		}
-		return nil, status.Error(codes.Internal, "internal error")
-	}
-
-	s.log.Debug("return create user request successfully")
-
-	return &userv1.CreateUserResponse{
-		Uuid: uuid,
-	}, nil
 }
 
 func (s *serverAPI) GetRequest(ctx context.Context, req *userv1.GetUserRequest) (*userv1.GetUserResponse, error) {
@@ -124,23 +100,6 @@ func (s *serverAPI) DeleteRequest(ctx context.Context, req *userv1.DeleteUserReq
 	}, nil
 }
 
-func validateCreateRequest(req *userv1.CreateUserRequest) error {
-	if req.GetEmail() == "" {
-		return status.Error(codes.InvalidArgument, "email is required")
-	}
-	if req.GetName() == "" {
-		return status.Error(codes.InvalidArgument, "name is required")
-	}
-	if req.GetSurname() == "" {
-		return status.Error(codes.InvalidArgument, "surname is required")
-	}
-	if req.GetRole() == "" {
-		return status.Error(codes.InvalidArgument, "role is required")
-	}
-
-	return nil
-}
-
 func validateGetRequest(req *userv1.GetUserRequest) error {
 	if req.GetUuid() == "" {
 		return status.Error(codes.InvalidArgument, "uuid is required")
@@ -153,17 +112,8 @@ func validateUpdateRequest(req *userv1.UpdateUserRequest) error {
 	if req.GetUuid() == "" {
 		return status.Error(codes.InvalidArgument, "uuid is required")
 	}
-	if req.GetEmail() == "" {
-		return status.Error(codes.InvalidArgument, "email is required")
-	}
-	if req.GetName() == "" {
-		return status.Error(codes.InvalidArgument, "name is required")
-	}
-	if req.GetSurname() == "" {
-		return status.Error(codes.InvalidArgument, "surname is required")
-	}
-	if req.GetRole() == "" {
-		return status.Error(codes.InvalidArgument, "role is required")
+	if req.GetEmail() == "" && req.GetName() == "" && req.GetSurname() == "" && req.GetRole() == "" {
+		return status.Error(codes.InvalidArgument, "one of the update params should be non empty")
 	}
 
 	return nil
