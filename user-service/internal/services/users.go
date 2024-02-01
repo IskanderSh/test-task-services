@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/domain/models"
+	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/lib/error/wrapper"
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/storage/postgres"
 	"github.com/pkg/errors"
 )
@@ -17,7 +18,7 @@ type UserService struct {
 
 type UserProvider interface {
 	GetUser(ctx context.Context, uuid string) (*models.User, error)
-	UpdateUser(ctx context.Context, uuid, name, surname, email, role string) (bool, error)
+	UpdateUser(ctx context.Context, uuid string, updateUser models.UpdateUser) (bool, error)
 	DeleteUser(ctx context.Context, uuid string) (bool, error)
 }
 
@@ -29,9 +30,8 @@ func New(
 }
 
 var (
-	ErrUserNotFound      = errors.New("user with such uuid not found")
-	ErrUserAlreadyExists = errors.New("user with this credentials already exists")
-	ErrInvalidCreds      = errors.New("invalid credentials")
+	ErrUserNotFound = errors.New("user with such uuid not found")
+	ErrInvalidCreds = errors.New("invalid credentials")
 
 	nameRegexp = regexp.MustCompile(`[A-Z][a-z]{5,30}`).MatchString
 
@@ -41,19 +41,52 @@ var (
 type funcNameString func(string) bool
 
 func (p *UserService) Get(ctx context.Context, uuid string) (*models.User, error) {
+	const op = "services.Get"
+
+	log := p.log.With(
+		slog.String("op", op),
+		slog.String("uuid", uuid))
+
+	log.Info("getting user")
+
 	user, err := p.usrProvider.GetUser(ctx, uuid)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			p.log.Warn("user not found", uuid)
-			return nil, ErrUserNotFound
+			log.Warn("user not found", uuid)
+
+			return nil, wrapper.Wrap(op, ErrUserNotFound)
 		}
-		return nil, err
+		log.Error("failed to get user", err)
+
+		return nil, wrapper.Wrap(op, err)
 	}
+
+	log.Info("user successfully get")
 
 	return user, nil
 }
 
 func (p *UserService) Update(ctx context.Context, uuid, name, surname, email, role string) (bool, error) {
+	const op = "service.Update"
+
+	log := p.log.With(
+		slog.String("op", op),
+		slog.String("uuid", uuid))
+
+	log.Info("getting user")
+
+	_, err := p.usrProvider.GetUser(ctx, uuid)
+	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			log.Warn("user not found", "uuid", uuid)
+
+			return false, wrapper.Wrap(op, ErrUserNotFound)
+		}
+		return false, wrapper.Wrap(op, err)
+	}
+
+	log.Info("updating user")
+
 	validateArgs := []struct {
 		funcNameString
 		value   string
@@ -67,32 +100,56 @@ func (p *UserService) Update(ctx context.Context, uuid, name, surname, email, ro
 
 	for _, args := range validateArgs {
 		if !args.funcNameString(args.value) {
+			log.Warn("invalid credentials", args.message, args.value)
+
 			return false, errors.Wrap(ErrInvalidCreds, args.message)
 		}
 	}
 
-	ok, err := p.usrProvider.UpdateUser(ctx, uuid, name, surname, email, role)
-	if err != nil {
-		if errors.Is(err, storage.ErrUserNotFound) {
-			p.log.Warn("user not found", uuid)
-			return false, ErrUserNotFound
-		}
-		return false, err
+	updateUser := models.UpdateUser{
+		Name:    &name,
+		Surname: &surname,
+		Email:   &email,
+		Role:    &role,
 	}
+
+	ok, err := p.usrProvider.UpdateUser(ctx, uuid, updateUser)
+	if err != nil {
+		return false, wrapper.Wrap(op, err)
+	}
+
+	log.Info("user successfully updated")
 
 	return ok, nil
 }
 
 func (p *UserService) Delete(ctx context.Context, uuid string) (bool, error) {
-	ok, err := p.usrProvider.DeleteUser(ctx, uuid)
+	const op = "service.Delete"
+
+	log := p.log.With(
+		slog.String("op", op),
+		slog.String("uuid", uuid))
+
+	log.Info("getting user")
+
+	_, err := p.usrProvider.GetUser(ctx, uuid)
 	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) {
-			p.log.Warn("user not found", uuid)
-			return false, ErrUserNotFound
-		}
+			log.Warn("user not found", "uuid", uuid)
 
-		return false, err
+			return false, wrapper.Wrap(op, ErrUserNotFound)
+		}
+		return false, wrapper.Wrap(op, err)
 	}
+
+	log.Info("deleting user")
+
+	ok, err := p.usrProvider.DeleteUser(ctx, uuid)
+	if err != nil {
+		return false, wrapper.Wrap(op, err)
+	}
+
+	log.Info("user successfully deleted")
 
 	return ok, nil
 }

@@ -35,7 +35,7 @@ func (s *serverAPI) GetRequest(ctx context.Context, req *userv1.GetUserRequest) 
 		return nil, err
 	}
 
-	s.log.Debug(fmt.Sprintf("successfully validate get request with params: %s"), req.GetUuid())
+	s.log.Debug(fmt.Sprintf("successfully validate get request with params: %s", req.GetUuid()))
 
 	user, err := s.user.Get(ctx, req.GetUuid())
 	if err != nil {

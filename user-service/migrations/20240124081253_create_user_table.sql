@@ -6,7 +6,7 @@ CREATE TABLE users (
     surname string,
     email string NOT NULL,
     hash_password string NOT NULL,
-    role string,
+    role string NOT NULL,
 );
 -- +goose StatementEnd
 
