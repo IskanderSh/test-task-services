@@ -30,7 +30,7 @@ func Register(gRPC *grpc.Server, user UserHandler, log *slog.Logger) {
 	userv1.RegisterUserServer(gRPC, &serverAPI{user: user, log: log})
 }
 
-func (s *serverAPI) GetRequest(ctx context.Context, req *userv1.GetUserRequest) (*userv1.GetUserResponse, error) {
+func (s *serverAPI) Get(ctx context.Context, req *userv1.GetUserRequest) (*userv1.GetUserResponse, error) {
 	if err := validateGetRequest(req); err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (s *serverAPI) GetRequest(ctx context.Context, req *userv1.GetUserRequest) 
 	}, nil
 }
 
-func (s *serverAPI) UpdateRequest(ctx context.Context, req *userv1.UpdateUserRequest) (*userv1.UpdateUserResponse, error) {
+func (s *serverAPI) Update(ctx context.Context, req *userv1.UpdateUserRequest) (*userv1.UpdateUserResponse, error) {
 	if err := validateUpdateRequest(req); err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (s *serverAPI) UpdateRequest(ctx context.Context, req *userv1.UpdateUserReq
 	}, nil
 }
 
-func (s *serverAPI) DeleteRequest(ctx context.Context, req *userv1.DeleteUserRequest) (*userv1.DeleteUserResponse, error) {
+func (s *serverAPI) Delete(ctx context.Context, req *userv1.DeleteUserRequest) (*userv1.DeleteUserResponse, error) {
 	if err := validateDeleteRequest(req); err != nil {
 		return nil, err
 	}

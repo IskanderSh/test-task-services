@@ -3,7 +3,9 @@ package main
 import (
 	"log/slog"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/app"
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/config"
@@ -36,6 +38,14 @@ func main() {
 	go application.GRPCServer.MustRun()
 
 	// graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	sign := <-stop
+	log.Info("stopping application", slog.String("signal", sign.String()))
+	application.GRPCServer.Stop()
+
+	log.Info("application stopped")
 }
 
 func setupLogger(cfg *config.Config) *slog.Logger {

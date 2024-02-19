@@ -22,8 +22,9 @@ var (
 )
 
 func New(dbConfig *config.Storage) (*UserStorage, error) {
-	connectionStr := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable",
+	connectionStr := fmt.Sprintf("host=postgres user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbConfig.User, dbConfig.Password, dbConfig.DB, dbConfig.Port)
+	fmt.Println(connectionStr)
 
 	db, err := sql.Open("postgres", connectionStr)
 	if err != nil {
@@ -40,15 +41,15 @@ func New(dbConfig *config.Storage) (*UserStorage, error) {
 func (s *UserStorage) GetUser(ctx context.Context, uuid string) (*models.User, error) {
 	const op = "storage.GetUser"
 
-	var user *models.User
+	var user models.User
 
 	row := s.db.QueryRow(GetUserQuery, uuid)
 
 	if err := row.Scan(&user.Uuid, &user.Name, &user.Surname, &user.Email, &user.Role); err != nil {
-		return nil, wrapper.Wrap(op, err)
+		return nil, wrapper.Wrap(op, ErrUserNotFound)
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (s *UserStorage) UpdateUser(ctx context.Context, uuid string, updateUser models.UpdateUser) (bool, error) {
