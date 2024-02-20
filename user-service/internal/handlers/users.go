@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	userv1 "github.com/IskanderSh/test-task-protos/gen/go"
+	userv1 "github.com/IskanderSh/test-task-protos/gen/go/user-service"
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/domain/models"
 	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/services"
 	"google.golang.org/grpc"
