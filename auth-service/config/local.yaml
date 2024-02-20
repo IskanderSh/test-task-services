@@ -1,0 +1,5 @@
+env: "local"
+log_level: "debug"
+grpc:
+  port: 2222
+  timeout: 10h
