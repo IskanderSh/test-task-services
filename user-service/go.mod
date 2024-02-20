@@ -1,4 +1,4 @@
-module github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service
+module github.com/IskanderSh/test-task-services/user-services
 
 go 1.21.5
 

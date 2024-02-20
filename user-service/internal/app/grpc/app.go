@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"net"
 
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/handlers"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/services"
+	"github.com/IskanderSh/test-task-services/user-services/internal/handlers"
+	"github.com/IskanderSh/test-task-services/user-services/internal/services"
 	"google.golang.org/grpc"
 )
 

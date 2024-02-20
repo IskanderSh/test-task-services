@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"regexp"
 
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/domain/models"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/lib/error/wrapper"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/storage/postgres"
+	"github.com/IskanderSh/test-task-services/user-services/internal/domain/models"
+	"github.com/IskanderSh/test-task-services/user-services/internal/lib/error/wrapper"
+	"github.com/IskanderSh/test-task-services/user-services/internal/storage/postgres"
 	"github.com/pkg/errors"
 )
 

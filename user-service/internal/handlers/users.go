@@ -7,8 +7,8 @@ import (
 	"log/slog"
 
 	userv1 "github.com/IskanderSh/test-task-protos/gen/go/user-service"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/domain/models"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/services"
+	"github.com/IskanderSh/test-task-services/user-services/internal/domain/models"
+	"github.com/IskanderSh/test-task-services/user-services/internal/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

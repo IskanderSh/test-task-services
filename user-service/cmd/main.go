@@ -7,8 +7,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/app"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/config"
+	"github.com/IskanderSh/test-task-services/user-services/internal/app"
+	"github.com/IskanderSh/test-task-services/user-services/internal/config"
 )
 
 const (

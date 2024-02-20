@@ -3,10 +3,10 @@ package app
 import (
 	"log/slog"
 
-	grpcapp "github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/app/grpc"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/config"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/services"
-	"github.com/Suplab-Team/test-task-go/tree/IskanderSh/user-service/internal/storage/postgres"
+	grpcapp "github.com/IskanderSh/test-task-services/user-services/internal/app/grpc"
+	"github.com/IskanderSh/test-task-services/user-services/internal/config"
+	"github.com/IskanderSh/test-task-services/user-services/internal/services"
+	"github.com/IskanderSh/test-task-services/user-services/internal/storage/postgres"
 )
 
 type App struct {
