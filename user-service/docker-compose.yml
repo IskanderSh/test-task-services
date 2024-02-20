@@ -13,7 +13,6 @@ services:
 
   user-service:
     build:
-      context: user-service
       dockerfile: Dockerfile
     container_name: user-service
     image: user-service
