@@ -3,3 +3,7 @@ log_level: "debug"
 grpc:
   port: 2222
   timeout: 10h
+user_service:
+  grpc_port: 1111
+  grpc_timeout: 30s
+  grpc_retries: 100

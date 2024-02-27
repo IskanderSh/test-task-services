@@ -16,7 +16,10 @@ func New(
 	log *slog.Logger,
 	cfg *config.Config,
 ) *App {
-	service := services.NewAuthService(log)
+	service, err := services.NewAuthService(log, cfg.UserService)
+	if err != nil {
+		panic(err)
+	}
 
 	grpcApp := grpcapp.NewGRPCApp(log, service, cfg.GRPC.Port)
 

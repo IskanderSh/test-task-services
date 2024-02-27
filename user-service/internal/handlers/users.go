@@ -67,6 +67,8 @@ func (s *serverAPI) Update(ctx context.Context, req *userv1.UpdateUserRequest) (
 	if err != nil {
 		if errors.Is(err, services.ErrUserNotFound) {
 			return nil, status.Error(codes.InvalidArgument, "user with such uuid not found")
+		} else if errors.Is(err, services.ErrInvalidCreds) {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
 		return nil, status.Error(codes.Internal, "internal error")
 	}

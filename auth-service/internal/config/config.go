@@ -9,14 +9,21 @@ import (
 )
 
 type Config struct {
-	Env      string `yaml:"env"`
-	LogLevel string `yaml:"log_level"`
-	GRPC     GRPC   `yaml:"grpc"`
+	Env         string      `yaml:"env"`
+	LogLevel    string      `yaml:"log_level"`
+	GRPC        GRPC        `yaml:"grpc"`
+	UserService UserService `yaml:"user_service"`
 }
 
 type GRPC struct {
 	Port    int           `yaml:"port"`
 	Timeout time.Duration `yaml:"timeout"`
+}
+
+type UserService struct {
+	GRPCPort    int           `yaml:"grpc_port"`
+	GRPCTimeout time.Duration `yaml:"grpc_timeout"`
+	GRPCRetries time.Duration `yaml:"grpc_retries"`
 }
 
 func MustLoad() *Config {
